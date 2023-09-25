@@ -1,19 +1,23 @@
-var express =  require('express');
 const db = require('../db');
 
-router = express.Router();
-
 module.exports.getAllEmployees = async ()=>{
-    const [rows] = await db.query("SELECT * FROM EmployeesT")
-    .catch(err => console.log (err))
-    return rows;
+    const [records] = await db.query("SELECT * FROM PersonT")
+    return records;
 }
 
-// router.get('/', async (req, res) => {
-//     const rows = await db.query("SELECT * FROM EmployeesT")
-//         .then(data => res.send(data))
-//         .catch(err => console.log (err))
-//         console.log(rows)
-// })
+module.exports.getPersonID = async (Person_id)=>{
+    const [record] = await db.query("SELECT * FROM PersonT WHERE Person_id = ?", [Person_id] )
+    return record;
+}
 
-module.exports = router;
+module.exports.deleteEmployee = async (obj, Person_id)=>{
+    const [{affectedRows}] = await db.query("DELETE FROM PersonT WHERE Person_id = ?", [Person_id] )
+    return affectedRows;
+}
+
+module.exports.AddOrEditEmployee = async (obj, Person_id = 0) => {
+    const [{affectedRows}] = await db.query("CALL AddOrEditEmployee (?, ?, ?, ?)", [Person_id, obj.Firstname, obj.Lastname, obj.Birthday] )
+    return affectedRows;
+}
+
+
